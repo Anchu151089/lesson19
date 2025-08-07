@@ -1,102 +1,93 @@
 import { test, expect } from '@playwright/test';
-import {ToDoItem} from "./toDoPage";
+import { TodoPage } from './TodoPage';
 
 test.beforeEach(async ({ page }) => {
-
-  const todo = new ToDoItem(page);
-  await todo.goto();
-
+  const todoPage = new TodoPage(page);
+  await todoPage.goto();
 });
 
 test('has title', async ({ page }) => {
-
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.visible()
-  await page.pause()
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await expect(todo.todoItemLabel).toBeVisible();
+  await page.pause();
 });
-test('create two items ', async ({ page }) => {
 
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.addItems('item 2')
+test('create two items', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.addItem('item 2');
 
-  const toDoItemNo =await todo.visible()
-  console.log('number of items added = '+ toDoItemNo);
-  expect(toDoItemNo).toBe(2)
-  await page.pause()
+  const count = await todo.getItemCount();
+  console.log('number of items added = ' + count);
+  expect(count).toBe(2);
+  await page.pause();
 });
 
 test('create an item and select that item', async ({ page }) => {
-
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.expectTodoCompleted()
-  await page.pause()
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.toggleFirstItem();
+  await expect(todo.todoItem).toHaveClass(/completed/);
+  await page.pause();
 });
 
-test('create an item and select that item and delete that item', async ({ page }) => {
-
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.hover()
-  await todo.button()
-  await page.pause()
+test('create an item, select it, and delete it', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.toggleFirstItem();
+  await todo.deleteFirstItem();
+  await page.pause();
 });
 
-test('create two item and select one item and click clear completed', async ({ page }) => {
+test('create two items, complete one, clear completed', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.toggleFirstItem();
+  await todo.addItem('item 2');
 
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.addItems('item 3')
-  const toDoItemNo =  await todo.getCount()
-  expect(toDoItemNo).toBe(2)
-  await todo.completeButton()
-  const toDoItemNoAfterDelete = await todo.getCount()
-  expect(toDoItemNoAfterDelete).toBe(1)
-  await page.pause()
+  const beforeClear = await todo.getItemCount();
+  expect(beforeClear).toBe(2);
 
+  await todo.clickClearCompleted();
+
+  const afterClear = await todo.getItemCount();
+  expect(afterClear).toBe(1);
+  await page.pause();
 });
 
-test('create two item and click completed', async ({ page }) => {
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.addItems('item 34')
-  await todo.completedLinkCheck()
-  const toDoItemNo =await todo.getCount()
-  expect(toDoItemNo).toBe(1)
-  console.log(toDoItemNo)
-  await page.pause()
-});
-test('create three item and click active', async ({ page }) => {
+test('create two items, complete one, filter by completed', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.toggleFirstItem();
+  await todo.addItem('item 2');
 
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.addItems('item 11')
-  await todo.addItems('item 12')
-  await todo.activeLinkCheck()
-  const toDoItemNo =await todo.getCount()
-  expect(toDoItemNo).toBe(2)
-  console.log(toDoItemNo)
-  await page.pause()
-});
-test('create three item select one and click All button', async ({ page }) => {
+  await todo.filterCompleted();
 
-
-  const todo = new ToDoItem(page);
-  await todo.addItems('item 1')
-  await todo.selectItem();
-  await todo.addItems('item 11')
-  await todo.addItems('item 12')
-  await todo.allButtonChecked()
-  const toDoItemNo =await todo.getCount()
-  expect(toDoItemNo).toBe(3)
-  console.log(toDoItemNo)
-  await page.pause()
+  const completedCount = await todo.getItemCount();
+  expect(completedCount).toBe(1);
+  console.log(completedCount);
+  await page.pause();
 });
 
+test('create three items, complete one and click Active button', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.toggleFirstItem();
+  await todo.addItem('item 2');
+  await todo.addItem('item 23');
+
+  await todo.filterActive()
+
+  const completedCount = await todo.getItemCount();
+  expect(completedCount).toBe(2);
+  console.log(completedCount);
+  await page.pause();
+});
+
+test.only('change the item name', async ({ page }) => {
+  const todo = new TodoPage(page);
+  await todo.addItem('item 1');
+  await todo.todoItemLabel.dblclick()
+  await page.pause();
+});

@@ -21,7 +21,7 @@ test('create two items ', async ({ page }) => {
   await todo.addItems('item 1')
   await todo.addItems('item 2')
 
-  const toDoItemNo =await  todo.visible()
+  const toDoItemNo =await todo.visible()
   console.log('number of items added = '+ toDoItemNo);
   expect(toDoItemNo).toBe(2)
   await page.pause()

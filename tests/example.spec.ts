@@ -87,6 +87,7 @@ test('create three item and click active', async ({ page }) => {
 });
 test('create three item select one and click All button', async ({ page }) => {
 
+
   const todo = new ToDoItem(page);
   await todo.addItems('item 1')
   await todo.selectItem();

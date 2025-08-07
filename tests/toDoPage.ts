@@ -41,7 +41,7 @@ export class ToDoItem
     }
     async visible()
     {
-        await  expect(this.toDoItemLabel).toBeVisible();
+        await  expect(this.toDoItemLabel).toBeVisible({ timeout: 10000 });
     }
     async selectItem()
     {

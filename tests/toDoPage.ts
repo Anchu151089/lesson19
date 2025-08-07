@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 
-export class TodoPage {
+export class TodoPage
+{
     readonly page: Page;
     readonly textInput: Locator;
     readonly todoItemLabel: Locator;
@@ -11,7 +12,8 @@ export class TodoPage {
     readonly completedLink: Locator;
     readonly activeLink: Locator;
 
-    constructor(page: Page) {
+    constructor(page: Page)
+    {
         this.page = page;
         this.textInput = page.getByTestId('text-input');
         this.todoItemLabel = page.getByTestId('todo-item-label');

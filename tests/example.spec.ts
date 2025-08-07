@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TodoPage } from './TodoPage';
+import {TodoPage} from "./toDoPage";
 
 test.beforeEach(async ({ page }) => {
   const todoPage = new TodoPage(page);

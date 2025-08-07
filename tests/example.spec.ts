@@ -85,7 +85,7 @@ test('create three items, complete one and click Active button', async ({ page }
   await page.pause();
 });
 
-test.only('change the item name', async ({ page }) => {
+test('change the item name', async ({ page }) => {
   const todo = new TodoPage(page);
   await todo.addItem('item 1');
   await todo.todoItemLabel.dblclick()
